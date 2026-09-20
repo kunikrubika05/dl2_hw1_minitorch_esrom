@@ -1,0 +1,42 @@
+name: MiniTorch Modules 0-3 CPU
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel
+        pip install numpy==1.22.4
+        pip install --no-deps --no-binary=numba --no-build-isolation numba==0.57.1
+        pip install -r requirements.txt
+        pip install -e .
+    - name: Test Modules 0-3 CPU
+      run: |
+        echo "Module 0"
+        pytest tests/test_operators.py tests/test_module.py -x -m task0_1
+        pytest tests/test_operators.py tests/test_module.py -x -m task0_2
+        pytest tests/test_operators.py tests/test_module.py -x -m task0_3
+        pytest tests/test_operators.py tests/test_module.py -x -m task0_4
+        echo "Module 1"
+        pytest tests/test_scalar.py tests/test_autodiff.py -x -m task1_1
+        pytest tests/test_scalar.py tests/test_autodiff.py -x -m task1_2
+        pytest tests/test_scalar.py tests/test_autodiff.py -x -m task1_3
+        pytest tests/test_scalar.py tests/test_autodiff.py -x -m task1_4
+        echo "Module 2"
+        pytest tests/test_tensor_data.py -x -m task2_1
+        pytest tests/test_tensor_data.py -x -m task2_2
+        pytest tests/test_tensor.py -x -m task2_3
+        pytest tests/test_tensor.py -x -m task2_4
+        echo "Module 3 CPU"
+        pytest tests/test_tensor_general.py -x -m task3_1
+        pytest tests/test_tensor_general.py -x -m task3_2
